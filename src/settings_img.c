@@ -13,9 +13,10 @@
 
 void setting_img(t_data *data)
 {
-    data->img.img_heigth = 00;
-    data->img.img_width = 00;
-    data->img.ground = "../img/Ground.xpm";
+    data->img.img_heigth = 50;
+    data->img.img_width = 50;
+    data->img.ground = "./img/AstartesRight.xpm";
     data->img.img_ground = mlx_xpm_file_to_image(data->mlx_ptr, data->img.ground, 
                                 &(data->img.img_width), &(data->img.img_heigth));
+    mlx_put_image_to_window(data->mlx_ptr, data->win_ptr, data->img.img_ground, 0, 0);
 }

@@ -16,6 +16,7 @@
 # include "minilibx-linux/mlx.h"
 # include "printf/ft_printf.h"
 # include <X11/keysym.h>
+# include <X11/X.h>
 # include <stdlib.h>
 
 # define WINDOW_HEIGHT 1080
@@ -45,6 +46,7 @@ typedef struct s_data
     void *mlx_ptr;
     void *win_ptr;
     char **map;
+    int move;
     t_image img;
     t_point point;
 } t_data;
