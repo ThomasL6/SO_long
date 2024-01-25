@@ -24,8 +24,8 @@ size_t	ft_strlen(const char *s)
 char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*tab;	
-	size_t	index;
-	size_t	i;
+	int		index;
+	int		i;
 
 	i = 0;
 	index = 0;

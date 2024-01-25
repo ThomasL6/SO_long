@@ -12,13 +12,12 @@
 #ifndef LIBFT_H
 # define LIBFT_H
 
-# include	<stdio.h>
-# include	<string.h>
-# include	<ctype.h>
-# include	<stdlib.h>
-// # include	<bsd/string.h>
-# include	<stddef.h>
-# include	<unistd.h>
+# include <stdio.h>
+# include <string.h>
+# include <ctype.h>
+# include <stdlib.h>
+# include <stddef.h>
+# include <unistd.h>
 
 int		ft_atoi(const char *nptr);
 int		ft_isalnum(int c);
@@ -39,7 +38,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	*ft_itoa(int n);
-char	**ft_split(char const *s, char c);
+char	**ft_split(char *s, char c);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t size);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);

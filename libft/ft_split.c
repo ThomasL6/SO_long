@@ -11,75 +11,102 @@
 /* ************************************************************************** */
 #include "libft.h"
 
-int	ft_charset(char c, char charset)
+char	*ft_strnew(size_t size)
 {
-	if (charset == c)
-		return (1);
-	return (0);
+	char	*str;
+
+	str = (char *)malloc(sizeof(char *) * (size + 1));
+	if (str == NULL)
+		return (NULL);
+	while (size > 0)
+		str[size--] = '\0';
+	str[0] = '\0';
+	return (str);
 }
 
-int	contw(char *str, char charset)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	size_t	j;
+	char	*str;
+
+	str = (char *) malloc (sizeof(*s) * (len + 1));
+	if (!str)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s[i])
+	{
+		if (i >= start && j < len)
+		{
+			str[j] = s[i];
+			j++;
+		}
+		i++;
+	}
+	str[j] = 0;
+	return (str);
+}
+
+int	ft_nbword(char const *s, char c)
 {
 	int	i;
-	int	w;
+	int	word;
 
-	w = 0;
 	i = 0;
-	while (str[i])
+	word = 0;
+	while (s && s[i])
 	{
-		while (ft_charset(str[i], charset) == 1 && str[i] != '\0')
-			i++;
-		if (ft_charset(str[i], charset) == 0 && str[i] != '\0')
-			w++;
-		while (ft_charset(str[i], charset) == 0 && str[i] != '\0')
+		if (s[i] != c)
+		{
+			word++;
+			while (s[i] != c && s[i])
+				i++;
+		}
+		else
 			i++;
 	}
-	return (w);
+	return (word);
 }
 
-char	*ft_strdupsize(const char *src, int size)
+int	ft_lword(char const *s, char c, int i)
 {
-	char	*dest;
-	char	*start;
-	int		i;
+	int	size;
 
-	i = 0;
-	dest = malloc(sizeof(char) * (size + 1));
-	start = dest;
-	if (!dest)
-		return (0);
-	while (*src && i < size)
+	size = 0;
+	while (s[i] != c && s[i])
 	{
-		*(dest++) = *(src++);
+		size++;
 		i++;
 	}
-	*dest = '\0';
-	return (start);
+	return (size);
 }
 
-char	**ft_split(char const *str, char charset)
+char	**ft_split(char *s, char c)
 {
-	char	**tab;
 	int		i;
-	int		w;
 	int		j;
+	int		size;
+	int		word;
+	char	**strs;
 
-	w = contw((char *)str, charset);
 	i = 0;
-	tab = malloc(sizeof(char *) * (w + 1));
-	if (!tab)
+	j = -1;
+	word = ft_nbword(s, c);
+	strs = (char **)malloc((word + 1) * sizeof(char *));
+	if (!strs)
 		return (NULL);
-	while (i < w)
+	while (++j < word)
 	{
-		j = 0;
-		while (ft_charset(*str, charset) == 1)
-			str++;
-		while (ft_charset(str[j], charset) == 0 && str[j])
-			j++;
-		tab[i] = ft_strdupsize(str, j);
-		str = str + j;
-		i++;
+		while (s[i] == c)
+			i++;
+		size = ft_lword(s, c, i);
+		strs[j] = ft_substr(s, i, size);
+		if (!strs[j])
+			return (NULL);
+		i += size;
 	}
-	tab[i] = 0;
-	return (tab);
+	strs[j] = NULL;
+	free(s);
+	return (strs);
 }

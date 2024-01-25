@@ -11,103 +11,52 @@
 /* ************************************************************************** */
 #include "get_next_line.h"
 
-char	*ft_freejoin(char *chaine, char *buff)
+char	*ft_stradd(char *str, char *buff, int size)
 {
-	char	*temp;
+	char	*ret;
+	int		i;
+	int		len;
 
-	temp = ft_strjoin(chaine, buff);
-	free(chaine);
-	return (temp);
-}
-
-char	*ft_read_and_save(char	*chaine, int fd)
-{
-	int		readbytes;
-	char	*buff;
-
-	if (!chaine)
-		chaine = ft_calloc(1, 1);
-	buff = ft_calloc(sizeof(char), BUFFER_SIZE + 1);
-	if (!buff)
+	i = 0;
+	len = ft_strlen(str);
+	ret = (char *)malloc(sizeof(char) * (len + size + 1));
+	if (!ret)
 		return (NULL);
-	readbytes = 1;
-	while (readbytes > 0)
+	while (i < len)
 	{
-		readbytes = read(fd, buff, BUFFER_SIZE);
-		if (readbytes == -1)
-		{
-			free (buff);
-			return (NULL);
-		}
-		buff[readbytes] = 0;
-		chaine = ft_freejoin(chaine, buff);
-		if (ft_strchr(chaine, '\n'))
-			break ;
+		ret[i] = str[i];
+		i++;
 	}
-	free (buff);
-	return (chaine);
-}
-
-char	*ft_get_line(char *chaine)
-{
-	int		index;
-	char	*count;
-
-	index = 0;
-	if (!chaine[index])
-		return (NULL);
-	while (chaine[index] != '\0' && chaine[index] != '\n')
-		index++;
-	count = ft_calloc(sizeof(char), index + 2);
-	if (!count)
-		return (NULL);
-	index = 0;
-	while (chaine[index] != '\0' && chaine[index] != '\n')
+	i = 0;
+	while (i < size)
 	{
-		count[index] = chaine[index];
-		index++;
+		ret[len + i] = buff[i];
+		i++;
 	}
-	if (chaine[index] == '\n' && chaine[index])
-		count[index++] = '\n';
-	return (count);
+	ret[len + i] = '\0';
+	free(str);
+	return (ret);
 }
 
-char	*ft_stock(char *chaine)
+int	get_next_line(int fd, char **str)
 {
-	int		index;
-	int		c;
-	char	*stock;
+	char	buff[BUFFER_SIZE];
+	int		ret;
 
-	index = 0;
-	c = 0;
-	while (chaine[index] != '\0' && chaine[index] != '\n')
-		index++;
-	if (!chaine[index])
+	ret = read(fd, buff, BUFFER_SIZE);
+	while (ret > 0)
 	{
-		free(chaine);
-		return (NULL);
+		*str = ft_stradd(*str, buff, ret);
+		if (!*str)
+			return (-1);
+		if (ft_strchr(buff, '\n'))
+			return (1);
+		ret = read(fd, buff, BUFFER_SIZE);
 	}
-	stock = ft_calloc(sizeof(char), ft_strlen(chaine) - index + 1);
-	if (!stock)
-		return (NULL);
-	index++;
-	while (chaine[index] != '\0')
-		stock[c++] = chaine[index++];
-	free(chaine);
-	return (stock);
-}
-
-char	*get_next_line(int fd)
-{
-	char		*line;
-	static char	*chaine;
-
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
-		return (NULL);
-	chaine = ft_read_and_save(chaine, fd);
-	if (!chaine)
-		return (NULL);
-	line = ft_get_line(chaine);
-	chaine = ft_stock(chaine);
-	return (line);
+	if (ret == 0)
+	{
+		free(*str);
+		*str = NULL;
+	}
+	return (ret);
 }

@@ -10,69 +10,77 @@
 /*                                                                            */
 /* ************************************************************************** */
 #include "../so_long.h"
-// int main()
-// {
-//     t_data *data;
 
-//     data = malloc((sizeof(data))* 10000);
-//     data->mlx_ptr = mlx_init();
-//     data->win_ptr = mlx_new_window(data->mlx_ptr, WINDOW_HEIGHT, WINDOW_WIDTH, "win42");
-//      printf("1");
-//     mlx_key_hook(data->win_ptr, key_handler, data);
-//     // printf("%p",key_handler);
-//     mlx_loop(data->mlx_ptr);
-//     return(0);
-// }
-
-int key_handler(int keycode, t_data *data) 
+int	end(t_data *data)
 {
-    if (keycode == 65307) 
-    {
-        mlx_destroy_window(data->mlx_ptr, data->win_ptr);
-        exit(0);
-    }
-    else if (keycode == 100) 
-    { 
-        data->move += 1;
-        printf("Nombre de mouvement %d\n", data->move);
-    }
-    else if (keycode == 115) 
-    { 
-        data->move += 1;
-        printf("Nombre de mouvement %d\n", data->move);
-    }
-    else if (keycode == 97) 
-    { 
-        data->move += 1;
-        printf("Nombre de mouvement %d\n", data->move);
-    }
-    else if (keycode == 119) 
-    { 
-        data->move += 1;
-        printf("Nombre de mouvement %d\n", data->move);
-    }
-    return (0);
-}
+	int	i;
 
-int	mouse_handler()
-{  
-    // mlx_destroy_window(data->mlx_ptr, data->win_ptr);
-	// mlx_destroy_display(data->mlx_ptr);
+	i = 0;
+	if (data->map != NULL)
+	{
+		while (data->map[i] != NULL)
+		{
+			free(data->map[i]);
+			i++;
+		}
+		free(data->map);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_wall);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_ground);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_collec);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_ennemy);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_player);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_player_left);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_player_up);
+		mlx_destroy_image(data->mlx_ptr, data->img.img_exit);
+		mlx_destroy_window(data->mlx_ptr, data->win_ptr);
+	}
+	mlx_destroy_display(data->mlx_ptr);
+	free(data->mlx_ptr);
 	exit(0);
 }
 
-int main()
+void	calculate_window_size(t_data *data)
 {
-    t_data *data;
+	int	y;
+	int	x;
 
-    data = malloc((sizeof(t_data)));
-    data->mlx_ptr = mlx_init();
-	data->img.img = mlx_new_image(data->mlx_ptr, 1920, 1080);
-    data->win_ptr = mlx_new_window(data->mlx_ptr, WINDOW_HEIGHT, WINDOW_WIDTH, "win42");
-    data->move = 0;
-    setting_img(data);
-    mlx_key_hook(data->win_ptr, key_handler, data);
-    mlx_hook(data->win_ptr, 17, 1L << 17, mouse_handler, &data);
-    mlx_loop(data->mlx_ptr);
-    // mlx_destroy_image(data->img.img, data->mlx_ptr);
+	y = 0;
+	x = 0;
+	while (data->map[y])
+	{
+		x = 0;
+		while (data->map[y][x])
+			x++;
+		y++;
+	}
+	data->width = x * IMAGE_SIZE;
+	data->height = y * IMAGE_SIZE;
+}
+
+int	main(int argc, char **argv)
+{
+	t_data	data;
+
+	ft_bzero(&data, sizeof(t_data));
+	if (argc != 2)
+		ft_printf("Error\n2 arguments needed");
+	else
+	{
+		set_pos(&data);
+		set_map(&data);
+		data.map = map_core(argv, &data);
+		if (!data.map)
+			return (0);
+		data.mlx_ptr = mlx_init();
+		setting_img(&data);
+		calculate_window_size(&data);
+		if (data.map != NULL)
+			heart_maps(&data);
+		else
+		{
+			close_solong(&data);
+			free(data.map);
+		}
+	}
+	return (0);
 }

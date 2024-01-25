@@ -11,113 +11,110 @@
 /* ************************************************************************** */
 #include "../so_long.h"
 
-int	check_form(char **map)
+int	check_form(t_data *data)
 {
 	int	x;
 	int	y;
 	int	count;
 
-	x = 0;
 	y = 0;
-	while (map[0][count])
+	count = 0;
+	while (data->map[0][count])
 		count++;
-	while (map[x])
+	while (data->map[y])
 	{
-		while (map[x][y])
+		x = 0;
+		while (data->map[y][x])
 			x++;
 		if (x != count)
 		{
-			ft_printf("Error, map is not a rectangle\n");
-			return (0);
+			ft_printf("Error\nMap is not a rectangle\n");
+			return (ERROR);
 		}
+		x = 0;
 		y++;
 	}
-	return (1);
+	return (VALID);
 }
 
-int	check_symbols(char **map)
+int	check_symbols(t_data *data)
 {
 	int	x;
 	int	y;
 
 	y = 0;
 	x = 0;
-	while (map[x])
+	while (data->map[y] != NULL)
 	{
-		if (map[x][y] != 'E' && map[x][y] != 'C' && map[x][y] != 'P'
-		&& map[x][y] != '1' && map[x][y] != '0' && map[x][y] != '\n')
+		while (data->map[y][x])
 		{
-			ft_printf("Error, unknown symbols\n");
-			return (0);
+			if (data->map[y][x] != 'E' && data->map[y][x] != 'C'
+			&& data->map[y][x] != 'P' && data->map[y][x] != 'V'
+			&& data->map[y][x] != '1' && data->map[y][x] != '0')
+			{
+				ft_printf("Error\nunknown symbols\n");
+				return (ERROR);
+			}
+			x++;
 		}
+		x = 0;
 		y++;
 	}
-	return (1);
+	return (VALID);
 }
 
-int	too_much(char **map)
+void	count_symb(t_data *data)
 {
 	int	x;
 	int	y;
-	int	count1;
-	int	count2;
 
-	x = 0;
-	count1 = 0;
-	count2 = 0;
-	while(map[x])
+	y = -1;
+	while (data->map[++y] != NULL)
 	{
-		y = 0;
-		while(map[x][y] != '\n')
+		x = 0;
+		while (data->map[y][x++])
 		{
-			if(map[x][y] == 'E')
-				count1++;
-			else if(map[x][y] == 'P')
-				count2++;
-			y++;
+			if (data->map[y][x] == 'E')
+				data->content.count_e = data->content.count_e + 1;
+			if (data->map[y][x] == 'P')
+				data->content.count_p = data->content.count_p + 1;
+			if (data->map[y][x] == 'C')
+				data->content.count_c = data->content.count_c + 1;
 		}
-		x++;
 	}
-	if (count1 != '1' || count2 != '1')
+}
+
+int	count_lines(char **map)
+{
+	int	i;
+
+	i = 0;
+	while (map[i])
+		i++;
+	return (i);
+}
+
+int	check_walls(t_data *data)
+{
+	int	y;
+	int	x;
+
+	data->height = count_lines(data->map);
+	data->width = ft_strlen(data->map[0]);
+	y = -1;
+	while (data->map[++y])
 	{
-		ft_printf("Error, too many exits or starts");
-		return (0);
+		if (data->map[y][0] != '1' || data->map[y][data->width - 1] != '1')
+			return (ERROR);
+		if (y == 0 || y == data->height - 1)
+		{
+			x = -1;
+			while (data->map[y][++x])
+			{
+				if (data->map[y][x] != '1')
+					return (ERROR);
+			}
+		}
 	}
-	return (1);
-}
-
-int count_lines(char **map)
-{
-    int i;
-
-    i = 0;
-    while(map[i])
-        i++;
-    return(i);
-}
-
-int check_walls(char **map)
-{
-    int x;
-    int y;
-    char character;
-
-    x = 0;
-    character = map[x][y];
-    while(map[x])
-    {
-        y = 0;
-        while(character != '\n')
-        {
-            if((x == 0 || y == 0) && character != '1')
-                return(0);
-            if (y == (ft_strlen(map[x]) - 1) && character != '1')
-				return (0);
-            if(x == (count_lines(map) - 1) && character != '1')
-                return(0);
-            y++;
-        }
-        x++;
-    }
-    return(1);
+	return (VALID);
 }
