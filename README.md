@@ -1,5 +1,5 @@
-																# So_long
-																![so_long](https://raw.githubusercontent.com/ayogun/42-project-badges/main/badges/so_longm.png)
+# So_long
+![so_long](https://raw.githubusercontent.com/ayogun/42-project-badges/main/badges/so_longm.png)
 
 ## Description
 so_long est un projet de l'École 42 visant à créer un petit jeu vidéo 2D en utilisant la bibliothèque graphique MiniLibX.
